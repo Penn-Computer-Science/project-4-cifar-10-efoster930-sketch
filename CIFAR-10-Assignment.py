@@ -8,7 +8,9 @@ import random
 
 
 print(tf.__version__)
+
 from keras.datasets import cifar10
+
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train = x_train.astype('float32') / 255.0
 x_test = x_test.astype('float32') / 255.0
@@ -31,13 +33,14 @@ epochs = 10
 model = tf.keras.models.Sequential([
         tf.keras.layers.Conv2D(64,(5,5),padding = 'same',activation = 'relu',input_shape=input_shape), #What it's basically doing is looking for edges in the image.
         tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
-        tf.keras.layers.MaxPool2D(),
-        tf.keras.layers.Dropout(0,25),
-        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape),
-        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(num_classes, activation = 'softmax')
+        tf.keras.layers.MaxPool2D(), #Downsampling the image to reduce the number of parameters and computation in the network.
+        tf.keras.layers.Dropout(0,25), #Dropout to prevent overfitting.
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.Flatten(), #Flattening the 2D arrays for fully connected layers
+        tf.keras.layers.Dense(num_classes, activation = 'softmax') #Output layer with softmax activation for multi-class classification. A softmax function is used to convert logits to probabilities. Logits are the raw, unnormalized scores outputted by the last layer of the neural network.
 ])
+
 
 model.compile(optimizer='adam',loss='categorical_crossentropy', metrics=['acc'])
 history = model.fit(x_train, y_train,epochs=10,validation_split=(0.1))
