@@ -31,6 +31,9 @@ epochs = 10
 
 
 model = tf.keras.models.Sequential([
+        tf.keras.layers.RandomFlip("horizontal"),
+        tf.keras.layers.RandomRotation(0.1),
+        tf.keras.layers.RandomZoom(0.1),
         tf.keras.layers.Conv2D(64,(5,5),padding = 'same',activation = 'relu',input_shape=input_shape), #What it's basically doing is looking for edges in the image.
         tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
         tf.keras.layers.MaxPool2D(), #Downsampling the image to reduce the number of parameters and computation in the network.
@@ -41,7 +44,30 @@ model = tf.keras.models.Sequential([
         tf.keras.layers.Dense(num_classes, activation = 'softmax') #Output layer with softmax activation for multi-class classification. A softmax function is used to convert logits to probabilities. Logits are the raw, unnormalized scores outputted by the last layer of the neural network.
 ])
 
-
 model.compile(optimizer='adam',loss='categorical_crossentropy', metrics=['acc'])
 history = model.fit(x_train, y_train,epochs=10,validation_split=(0.1))
 
+fig, ax = plt.subplots(2, 1)
+
+ax[0].plot(history.history['loss'], color='b', label="Training Loss")  # Training loss in blue
+ax[0].plot(history.history['val_loss'], color='r', label="Validation Loss")  # Validation loss in red
+# Add a legend to the first subplot for clarity
+legend = ax[0].legend(loc='best', shadow=True)
+# Add labels and title to the first subplot
+ax[0].set_title('Loss')
+ax[0].set_xlabel('Epochs')
+ax[0].set_ylabel('Loss')
+
+# Plot the training and validation accuracy on the second subplot
+ax[1].plot(history.history['acc'], color='b', label="Training Accuracy")  # Training accuracy in blue
+ax[1].plot(history.history['val_acc'], color='r', label="Validation Accuracy")  # Validation accuracy in red
+# Add a legend to the second subplot for clarity
+legend = ax[1].legend(loc='best', shadow=True)
+# Add labels and title to the second subplot
+ax[1].set_title('Accuracy')
+ax[1].set_xlabel('Epochs')
+ax[1].set_ylabel('Accuracy')
+
+# Display the plots
+plt.tight_layout()  # Adjust layout to prevent overlap between subplots
+plt.show()  # Show the figure
