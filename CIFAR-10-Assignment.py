@@ -27,8 +27,7 @@ input_shape = (32,32,3)
 
 batch_size = 128
 num_classes = 10
-epochs = 10
-
+epochs = 15
 
 model = tf.keras.models.Sequential([
         tf.keras.layers.RandomFlip("horizontal"),
@@ -44,8 +43,11 @@ model = tf.keras.models.Sequential([
         tf.keras.layers.Dense(num_classes, activation = 'softmax') #Output layer with softmax activation for multi-class classification. A softmax function is used to convert logits to probabilities. Logits are the raw, unnormalized scores outputted by the last layer of the neural network.
 ])
 
+
+
+#We use categorical crossentropy as our loss function because we have more than two classes.
 model.compile(optimizer='adam',loss='categorical_crossentropy', metrics=['acc'])
-history = model.fit(x_train, y_train,epochs=10,validation_split=(0.1))
+history = model.fit(x_train, y_train,epochs=15,validation_split=(0.1))
 
 fig, ax = plt.subplots(2, 1)
 
@@ -71,3 +73,13 @@ ax[1].set_ylabel('Accuracy')
 # Display the plots
 plt.tight_layout()  # Adjust layout to prevent overlap between subplots
 plt.show()  # Show the figure
+
+#generate the confusion matrix
+# Predict the values from the testing dataset
+Y_pred = model.predict(x_test)
+# Convert predictions classes to one hot vectors 
+Y_pred_classes = np.argmax(Y_pred, axis=1) 
+# Convert testing observations to one hot vectors
+Y_true = np.argmax(y_test, axis=1)
+# compute the confusion matrix
+confusion_mtx = tf.math.confusion_matrix(Y_true, Y_pred_classes) 
