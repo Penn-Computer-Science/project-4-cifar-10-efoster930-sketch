@@ -27,6 +27,10 @@ input_shape = (32,32,3)
 batch_size = 32
 num_classes = 100
 epochs = 8
+learning_rate = 0.01
+momentum = 0.9
+nesterov = True
+
 
 model = tf.keras.models.Sequential([
         tf.keras.layers.RandomFlip("horizontal"),
@@ -52,15 +56,35 @@ model = tf.keras.models.Sequential([
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
         tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(5,5),padding = 'same',activation = 'relu',input_shape=input_shape), #What it's basically doing is looking for edges in the image.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPool2D(), #Downsampling the image to reduce the number of parameters and computation in the network.
+        #tf.keras.layers.Dropout(0,25), #Dropout to prevent overfitting.
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(5,5),padding = 'same',activation = 'relu',input_shape=input_shape), #What it's basically doing is looking for edges in the image.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.MaxPool2D(), #Downsampling the image to reduce the number of parameters and computation in the network.
+        #tf.keras.layers.Dropout(0,25), #Dropout to prevent overfitting.
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(64,(3,3),padding = 'same',activation = 'relu',input_shape=input_shape), #Another convolution layer to find more complex features.
+        tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Flatten(), #Flattening the 2D arrays for fully connected layers
         tf.keras.layers.Dense(num_classes, activation = 'softmax') #Output layer with softmax activation for multi-class classification. A softmax function is used to convert logits to probabilities. Logits are the raw, unnormalized scores outputted by the last layer of the neural network.
 ])
 
-
-#optimizer = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, nesterov=True) #Maybeee????
+loss = tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1)
+opt = tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=momentum, nesterov=True) #Maybeee????
 
 #We use categorical crossentropy as our loss function because we have more than two classes.
-model.compile(optimizer='nesterov',loss='categorical_crossentropy', metrics=['acc'])
+model.compile(optimizer=opt,loss=loss, metrics=['acc'])
 history = model.fit(x_train, y_train,epochs=epochs,validation_split=(0.1))
 
 fig, ax = plt.subplots(2, 1)
